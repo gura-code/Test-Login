@@ -63,7 +63,7 @@
     <!-- Script JavaScript per Firebase e Autenticazione Google -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAmFS014XYQ8b3pJ5iz2g5m8kwiqgizuBY",
@@ -77,40 +77,36 @@
         try {
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
-            
-            // Ascolta i cambiamenti di stato (se l'utente è loggato o meno)
+            const provider = new GoogleAuthProvider();
+
+            // Gestisce il ritorno dal login con Google
+            getRedirectResult(auth)
+                .catch((error) => {
+                    console.error("Errore durante il redirect:", error);
+                    alert("Errore di login: " + error.message);
+                });
+
+            // Ascolta i cambiamenti di stato dell'utente
             onAuthStateChanged(auth, (user) => {
                 document.getElementById("status").style.display = "none";
                 if (user) {
-                    // Utente entrato
                     document.getElementById("login-section").style.display = "none";
                     document.getElementById("user-section").style.display = "block";
                     document.getElementById("userName").innerText = user.displayName || user.email;
                 } else {
-                    // Utente uscito o non loggato
                     document.getElementById("login-section").style.display = "block";
                     document.getElementById("user-section").style.display = "none";
                 }
             });
 
-            // Gestione click sul pulsante di Login con Google
-            const provider = new GoogleAuthProvider();
+            // Avvia il login reindirizzando la pagina (ottimo per mobile)
             document.getElementById("googleLoginBtn").addEventListener("click", () => {
-                signInWithPopup(auth, provider)
-                .then((result) => {
-                    console.log("Login riuscito!", result.user);
-                })
-                .catch((error) => {
-                    console.error("Errore durante il login:", error);
-                    alert("Errore di login: " + error.message);
-                });
+                signInWithRedirect(auth, provider);
             });
 
-            // Gestione click sul pulsante di Logout (Esci)
+            // Gestione Logout
             document.getElementById("logoutBtn").addEventListener("click", () => {
-                signOut(auth).then(() => {
-                    console.log("Logout effettuato");
-                }).catch((error) => {
+                signOut(auth).catch((error) => {
                     console.error("Errore durante il logout:", error);
                 });
             });
