@@ -295,10 +295,10 @@
             }
 
             card.innerHTML = `
-                <div class="post-header" onclick="showUserProfile('${post.uid}', '${post.name}', '${post.email}', '${post.photoURL}')">
+                <div class="post-header" onclick="showUserProfile('${post.uid}', '${escapeHtml(post.name)}', '${post.email}', '${post.photoURL}')">
                     <img src="${avatar}" class="user-avatar" alt="Avatar">
                     <div>
-                        <div class="post-author">${post.name}</div>
+                        <div class="post-author">${escapeHtml(post.name)}</div>
                         <div class="post-date">${dateStr}</div>
                     </div>
                 </div>
@@ -320,11 +320,11 @@
             }
         };
 
-        // Sicurezza di base per evitare injection nel testo
+        // Sicurezza di base per il testo
         function escapeHtml(text) {
+            if (!text) return "";
             const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            .replace(/[&<>"']/g, m => map[m]);
-            return text;
+            return text.replace(/[&<>"']/g, m => map[m]);
         }
     </script>
 
