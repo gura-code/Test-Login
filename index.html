@@ -58,13 +58,13 @@
         <h2>Piattaforma Privata</h2>
         <p id="status">Caricamento in corso...</p>
         
-        <!-- Sezione Login (Se non sei loggato) -->
+        <!-- Sezione Login -->
         <div id="login-section" style="display: none;">
             <p>Accedi con il tuo account Google per entrare nella community.</p>
             <button id="googleLoginBtn">Accedi con Google</button>
         </div>
         
-        <!-- Sezione Piattaforma / Dashboard (Se SEI loggato) -->
+        <!-- Sezione Dashboard -->
         <div id="user-section" style="display: none;">
             <img id="userPhoto" class="user-avatar" src="" alt="Foto profilo" style="display:none;">
             <h3>Benvenuto, <span id="userName"></span>!</h3>
@@ -82,7 +82,7 @@
         </div>
     </div>
 
-    <!-- Script JavaScript -->
+    <!-- Script Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -97,92 +97,84 @@
           appId: "1:405305919800:web:dc110785fd431b066459cd"
         };
 
-        try {
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            const db = getFirestore(app);
-            const provider = new GoogleAuthProvider();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
 
-            // Gestisce il ritorno dal redirect di Google
-            getRedirectResult(auth).catch((error) => {
-                console.error("Errore redirect:", error);
-            });
+        // Gestisce il ritorno dal redirect di Google
+        getRedirectResult(auth).catch((error) => {
+            console.error("Errore redirect:", error);
+        });
 
-            // Controlla se l'utente è loggato o meno
-            onAuthStateChanged(auth, async (user) => {
-                document.getElementById("status").style.display = "none";
-                if (user) {
-                    // Utente loggato: mostra la dashboard
-                    document.getElementById("login-section").style.display = "none";
-                    document.getElementById("user-section").style.display = "block";
-                    
-                    document.getElementById("userName").innerText = user.displayName || "Utente";
-                    document.getElementById("userEmail").innerText = user.email;
-                    
-                    if (user.photoURL) {
-                        const photo = document.getElementById("userPhoto");
-                        photo.src = user.photoURL;
-                        photo.style.display = "inline-block";
-                    }
-
-                    // Prova a caricare eventuali dati salvati in precedenza
-                    try {
-                        const docRef = doc(db, "users", user.uid);
-                        const docSnap = await getDoc(docRef);
-                        if (docSnap.exists()) {
-                            document.getElementById("userStatusInput").value = docSnap.data().statusText || "";
-                        }
-                    } catch (e) {
-                        console.log("Dati non ancora presenti sul database.");
-                    }
-
-                } else {
-                    // Utente non loggato: mostra il pulsante di accesso
-                    document.getElementById("login-section").style.display = "block";
-                    document.getElementById("user-section").style.display = "none";
+        // Controlla se l'utente è loggato
+        onAuthStateChanged(auth, async (user) => {
+            document.getElementById("status").style.display = "none";
+            if (user) {
+                document.getElementById("login-section").style.display = "none";
+                document.getElementById("user-section").style.display = "block";
+                
+                document.getElementById("userName").innerText = user.displayName || "Utente";
+                document.getElementById("userEmail").innerText = user.email;
+                
+                if (user.photoURL) {
+                    const photo = document.getElementById("userPhoto");
+                    photo.src = user.photoURL;
+                    photo.style.display = "inline-block";
                 }
-            });
 
-            // Azione tasto Login
-            document.getElementById("googleLoginBtn").addEventListener("click", () => {
-                signInWithRedirect(auth, provider);
-            });
-
-            // Azione tasto Salva Dati
-            document.getElementById("saveDataBtn").addEventListener("click", async () => {
-                const user = auth.currentUser;
-                const text = document.getElementById("userStatusInput").value;
-                if (user) {
-                    try {
-                        await setDoc(doc(db, "users", user.uid), {
-                            name: user.displayName,
-                            email: user.email,
-                            statusText: text,
-                            updatedAt: new Date().toISOString()
-                        });
-                        document.getElementById("saveMessage সিনেমা").innerText = "Dati salvati con successo!";
-                        document.getElementById("saveMessage").innerText = "Dati salvati con successo sul database!";
-                        setTimeout(() => { document.getElementById("saveMessage").innerText = ""; }, 3000);
-                    } catch (error) {
-                        console.error("Errore salvataggio:", error);
-                        alert("Errore nel salvataggio. Assicurati di aver attivato Firestore nella console di Firebase.");
+                // Carica eventuali dati salvati in precedenza da Firestore
+                try {
+                    const docRef = doc(db, "users", user.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        document.getElementById("userStatusInput").value = docSnap.data().statusText || "";
                     }
+                } catch (e) {
+                    console.log("Nessun dato precedente trovato.");
                 }
-            });
 
-            // Azione tasto Logout
-            document.getElementById("logoutBtn").addEventListener("click", () => {
-                signOut(auth).then(() => {
-                    window.location.reload();
-                }).catch((error) => {
-                    console.error("Errore logout:", error);
-                });
-            });
+            } else {
+                document.getElementById("login-section").style.display = "block";
+                document.getElementById("user-section").style.display = "none";
+            }
+        });
 
-        } catch (error) {
-            document.getElementById("status").innerText = "Errore di configurazione.";
-            console.error("Errore:", error);
-        }
+        // Azione tasto Login
+        document.getElementById("googleLoginBtn").addEventListener("click", () => {
+            signInWithRedirect(auth, provider);
+        });
+
+        // Azione tasto Salva Dati sul database
+        document.getElementById("saveDataBtn").addEventListener("click", async () => {
+            const user = auth.currentUser;
+            const text = document.getElementById("userStatusInput").value;
+            if (user) {
+                try {
+                    await setDoc(doc(db, "users", user.uid), {
+                        name: user.displayName,
+                        email: user.email,
+                        statusText: text,
+                        updatedAt: new Date().toISOString()
+                    });
+                    const msg = document.getElementById("saveMessage");
+                    msg.innerText = "Dati salvati con successo sul database!";
+                    setTimeout(() => { msg.innerText = ""; }, 3000);
+                } catch (error) {
+                    console.error("Errore salvataggio:", error);
+                    alert("Errore nel salvataggio.");
+                }
+            }
+        });
+
+        // Azione tasto Logout
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            signOut(auth).then(() => {
+                window.location.reload();
+            }).catch((error) => {
+                console.error("Errore logout:", error);
+            });
+        });
     </script>
 
 </body>
