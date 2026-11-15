@@ -3,90 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piattaforma Privata</title>
+    <title>MiniSocial</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fafafa;
+            color: #262626;
             margin: 0;
-            padding: 40px 20px;
+            padding-bottom: 50px;
+        }
+        header {
+            background: white;
+            border-bottom: 1px solid #dbdbdb;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        h1 { font-size: 20px; margin: 0; font-weight: bold; color: #db4437; cursor: pointer; }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
         }
         .card {
             background: white;
-            max-width: 450px;
-            margin: 0 auto;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
         button {
-            background-color: #4285F4;
+            background-color: #0095f6;
             color: white;
             border: none;
-            padding: 12px 20px;
-            font-size: 16px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
-            margin-top: 15px;
-            width: 100%;
         }
-        button:hover { background-color: #357ae8; }
-        #logoutBtn { background-color: #db4437; margin-top: 20px; }
-        #logoutBtn:hover { background-color: #c23321; }
+        button:hover { background-color: #1877f2; }
+        .danger-btn { background-color: #ed4956; }
+        .danger-btn:hover { background-color: #c93b45; }
         textarea {
             width: 100%;
             padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid #dbdbdb;
+            border-radius: 6px;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            resize: none;
+            font-family: inherit;
             margin-bottom: 10px;
         }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .post-header img { width: 35px; height: 35px; }
+        .post-author { font-weight: bold; font-size: 14px; }
+        .post-date { font-size: 11px; color: #8e8e8e; }
+        .post-content { font-size: 15px; line-height: 1.4; margin-bottom: 15px; word-break: break-word; }
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+        .nav-links a { text-decoration: none; color: #262626; font-weight: bold; font-size: 14px; cursor: pointer; }
+        .profile-banner {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .profile-banner img { width: 80px; height: 80px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>Piattaforma Privata</h2>
-        <p id="status">Caricamento in corso...</p>
-        
-        <!-- Sezione Login -->
-        <div id="login-section" style="display: none;">
-            <p>Accedi con il tuo account Google per entrare nella community.</p>
-            <button id="googleLoginBtn">Accedi con Google</button>
+    <!-- Header / Navbar -->
+    <header id="mainHeader" style="display:none;">
+        <h1 onclick="showHome()">MiniSocial</h1>
+        <div class="nav-links">
+            <a onclick="showHome()">Home</a>
+            <a onclick="showMyProfile()">Il mio Profilo</a>
+            <a onclick="logout()" style="color: #ed4956;">Esci</a>
         </div>
-        
-        <!-- Sezione Dashboard -->
-        <div id="user-section" style="display: none;">
-            <img id="userPhoto" class="user-avatar" src="" alt="Foto profilo" style="display:none;">
-            <h3>Benvenuto, <span id="userName"></span>!</h3>
-            <p id="userEmail" style="color: #666; font-size: 14px;"></p>
-            
-            <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
-            
-            <h4>La tua bacheca personale</h4>
-            <p style="font-size: 14px; text-align: left;">Scrivi qualcosa per testare il salvataggio dei dati:</p>
-            <textarea id="userStatusInput" rows="3" placeholder="Come stai oggi? A cosa stai lavorando?"></textarea>
-            <button id="saveDataBtn" style="background-color: #0F9D58; margin-top: 10px;">Salva sul database</button>
-            <p id="saveMessage" style="font-size: 13px; color: green; margin-top: 5px; font-weight: bold;"></p>
+    </header>
 
-            <button id="logoutBtn">Esci (Logout)</button>
+    <div class="container">
+        <!-- Schermata Login -->
+        <div id="login-section" class="card" style="text-align: center; display: none; margin-top: 50px;">
+            <h2>Benvenuto su MiniSocial</h2>
+            <p style="color: #8e8e8e; margin-bottom: 20px;">Accedi con Google per condividere post e vedere quelli degli altri.</p>
+            <button id="googleLoginBtn" style="width: 100%;">Accedi con Google</button>
+        </div>
+
+        <!-- Vista Feed Home -->
+        <div id="home-view" style="display: none;">
+            <!-- Crea Post -->
+            <div class="card">
+                <h3>Cosa c'è di nuovo?</h3>
+                <textarea id="postInput" rows="3" placeholder="Condividi un pensiero con la community..."></textarea>
+                <div style="text-align: right;">
+                    <button id="publishBtn">Pubblica</button>
+                </div>
+            </div>
+            <!-- Lista Post -->
+            <div id="feedContainer"></div>
+        </div>
+
+        <!-- Vista Profilo Utente -->
+        <div id="profile-view" style="display: none;">
+            <div id="profileBanner" class="profile-banner"></div>
+            <h3 style="margin-bottom: 15px;">Post pubblicati:</h3>
+            <div id="profileFeedContainer"></div>
         </div>
     </div>
 
-    <!-- Script Firebase con Popup -->
+    <!-- Script Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAmFS014XYQ8b3pJ5iz2g5m8kwiqgizuBY",
@@ -102,78 +151,181 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // Controlla lo stato dell'utente in tempo reale
-        onAuthStateChanged(auth, async (user) => {
-            document.getElementById("status").style.display = "none";
+        let currentUser = null;
+
+        // Gestione Auth State
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
             if (user) {
                 document.getElementById("login-section").style.display = "none";
-                document.getElementById("user-section").style.display = "block";
-                
-                document.getElementById("userName").innerText = user.displayName || "Utente";
-                document.getElementById("userEmail").innerText = user.email;
-                
-                if (user.photoURL) {
-                    const photo = document.getElementById("userPhoto");
-                    photo.src = user.photoURL;
-                    photo.style.display = "inline-block";
-                }
-
-                // Carica dati da Firestore
-                try {
-                    const docRef = doc(db, "users", user.uid);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        document.getElementById("userStatusInput").value = docSnap.data().statusText || "";
-                    }
-                } catch (e) {
-                    console.log("Nessun dato precedente.");
-                }
-
+                document.getElementById("mainHeader").style.display = "flex";
+                showHome();
             } else {
                 document.getElementById("login-section").style.display = "block";
-                document.getElementById("user-section").style.display = "none";
+                document.getElementById("mainHeader").style.display = "none";
+                document.getElementById("home-view").style.display = "none";
+                document.getElementById("profile-view").style.display = "none";
             }
         });
 
-        // Azione tasto Login con Popup
+        // Pulsante Login
         document.getElementById("googleLoginBtn").addEventListener("click", () => {
-            signInWithPopup(auth, provider)
-                .catch((error) => {
-                    console.error("Errore login popup:", error);
-                    alert("Errore durante il login: " + error.message);
-                });
+            signInWithPopup(auth, provider).catch(e => alert("Errore login: " + e.message));
         });
 
-        // Azione tasto Salva Dati
-        document.getElementById("saveDataBtn").addEventListener("click", async () => {
-            const user = auth.currentUser;
-            const text = document.getElementById("userStatusInput").value;
-            if (user) {
+        // Funzione Logout globale
+        window.logout = () => {
+            signOut(auth).then(() => window.location.reload());
+        };
+
+        // Navigazione: Mostra Home
+        window.showHome = async () => {
+            document.getElementById("home-view").style.display = "block";
+            document.getElementById("profile-view").style.display = "none";
+            await loadFeed("feedContainer");
+        };
+
+        // Navigazione: Mostra Profilo Personale
+        window.showMyProfile = () => {
+            if (currentUser) {
+                window.showUserProfile(currentUser.uid, currentUser.displayName, currentUser.email, currentUser.photoURL);
+            }
+        };
+
+        // Mostra Profilo di un utente specifico
+        window.showUserProfile = async (uid, name, email, photoURL) => {
+            document.getElementById("home-view").style.display = "none";
+            document.getElementById("profile-view").style.display = "block";
+
+            const banner = document.getElementById("profileBanner");
+            banner.innerHTML = `
+                <img src="${photoURL || 'https://via.placeholder.com/80'}" class="user-avatar" style="width:80px;height:80px;">
+                <h2>${name || 'Utente'}</h2>
+                <p style="color: #8e8e8e; font-size: 14px; margin: 0;">${email || ''}</p>
+            `;
+
+            await loadUserPosts(uid, "profileFeedContainer");
+        };
+
+        // Pubblica Post
+        document.getElementById("publishBtn").addEventListener("click", async () => {
+            const text = document.getElementById("postInput").value.trim();
+            if (!text) return alert("Scrivi qualcosa prima di pubblicare!");
+
+            try {
+                await addDoc(collection(db, "posts"), {
+                    uid: currentUser.uid,
+                    name: currentUser.displayName || "Utente",
+                    email: currentUser.email,
+                    photoURL: currentUser.photoURL || "",
+                    text: text,
+                    createdAt: serverTimestamp()
+                });
+                document.getElementById("postInput").value = "";
+                await loadFeed("feedContainer");
+            } catch (e) {
+                console.error("Errore pubblicazione:", e);
+                alert("Errore durante la pubblicazione.");
+            }
+        });
+
+        // Carica Feed Generale
+        async function loadFeed(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "<p style='text-align:center; color:#8e8e8e;'>Caricamento post...</p>";
+
+            try {
+                const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                container.innerHTML = "";
+                if (querySnapshot.empty) {
+                    container.innerHTML = "<p style='text-align:center; color:#8e8e8e;'>Nessun post trovato. Sii il primo a scrivere qualcosa!</p>";
+                    return;
+                }
+
+                querySnapshot.forEach((docSnap) => {
+                    const post = docSnap.data();
+                    const postId = docSnap.id;
+                    container.appendChild(createPostCard(post, postId));
+                });
+            } catch (e) {
+                console.error("Errore caricamento feed:", e);
+                container.innerHTML = "<p style='text-align:center; color:red;'>Errore nel caricamento dei post.</p>";
+            }
+        }
+
+        // Carica Post di un singolo utente
+        async function loadUserPosts(uid, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "<p style='text-align:center; color:#8e8e8e;'>Caricamento post...</p>";
+
+            try {
+                const q = query(collection(db, "posts"), where("uid", "==", uid));
+                const querySnapshot = await getDocs(q);
+                
+                container.innerHTML = "";
+                if (querySnapshot.empty) {
+                    container.innerHTML = "<p style='text-align:center; color:#8e8e8e;'>Questo utente non ha ancora pubblicato nulla.</p>";
+                    return;
+                }
+
+                querySnapshot.forEach((docSnap) => {
+                    const post = docSnap.data();
+                    const postId = docSnap.id;
+                    container.appendChild(createPostCard(post, postId));
+                });
+            } catch (e) {
+                console.error("Errore caricamento profilo:", e);
+                container.innerHTML = "<p style='text-align:center; color:red;'>Errore nel caricamento.</p>";
+            }
+        }
+
+        // Crea l'elemento HTML di un post
+        function createPostCard(post, postId) {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            const dateStr = post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleString() : "Data recente";
+            const avatar = post.photoURL || "https://via.placeholder.com/40";
+
+            let deleteBtnHtml = "";
+            if (currentUser && post.uid === currentUser.uid) {
+                deleteBtnHtml = `<button onclick="deletePost('${postId}')" class="danger-btn" style="padding: 4px 8px; font-size: 11px; float: right;">Elimina</button>`;
+            }
+
+            card.innerHTML = `
+                <div class="post-header" onclick="showUserProfile('${post.uid}', '${post.name}', '${post.email}', '${post.photoURL}')">
+                    <img src="${avatar}" class="user-avatar" alt="Avatar">
+                    <div>
+                        <div class="post-author">${post.name}</div>
+                        <div class="post-date">${dateStr}</div>
+                    </div>
+                </div>
+                <div class="post-content">${escapeHtml(post.text)}</div>
+                ${deleteBtnHtml}
+            `;
+            return card;
+        }
+
+        // Elimina post
+        window.deletePost = async (postId) => {
+            if (confirm("Vuoi davvero eliminare questo post?")) {
                 try {
-                    await setDoc(doc(db, "users", user.uid), {
-                        name: user.displayName,
-                        email: user.email,
-                        statusText: text,
-                        updatedAt: new Date().toISOString()
-                    });
-                    const msg = document.getElementById("saveMessage");
-                    msg.innerText = "Dati salvati con successo sul database!";
-                    setTimeout(() => { msg.innerText = ""; }, 3000);
-                } catch (error) {
-                    console.error("Errore salvataggio:", error);
-                    alert("Errore nel salvataggio.");
+                    await deleteDoc(doc(db, "posts", postId));
+                    showHome();
+                } catch (e) {
+                    alert("Errore durante l'eliminazione.");
                 }
             }
-        });
+        };
 
-        // Azione tasto Logout
-        document.getElementById("logoutBtn").addEventListener("click", () => {
-            signOut(auth).then(() => {
-                window.location.reload();
-            }).catch((error) => {
-                console.error("Errore logout:", error);
-            });
-        });
+        // Sicurezza di base per evitare injection nel testo
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            .replace(/[&<>"']/g, m => map[m]);
+            return text;
+        }
     </script>
 
 </body>
