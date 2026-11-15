@@ -2,140 +2,258 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniSocial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Command Center</title>
+    
+    <!-- Meta tag per farla sembrare un'app a schermo intero -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #fafafa;
-            color: #262626;
-            margin: 0;
-            padding-bottom: 50px;
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --border-color: #1f293d;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger: #ef4444;
         }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
         header {
-            background: white;
-            border-bottom: 1px solid #dbdbdb;
-            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        h1 { font-size: 20px; margin: 0; font-weight: bold; color: #db4437; cursor: pointer; }
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-        .card {
-            background: white;
-            border: 1px solid #dbdbdb;
-            border-radius: 8px;
-            padding: 20px;
+            padding: 15px 5px;
+            border-bottom: 1px solid var(--border-color);
             margin-bottom: 20px;
         }
+
+        .logo {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .container {
+            flex: 1;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        h2, h3 {
+            margin-top: 0;
+            font-size: 18px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
         button {
-            background-color: #0095f6;
+            background-color: var(--accent);
             color: white;
             border: none;
             padding: 10px 16px;
             font-size: 14px;
-            font-weight: bold;
-            border-radius: 6px;
+            font-weight: 600;
+            border-radius: 8px;
             cursor: pointer;
-        }
-        button:hover { background-color: #1877f2; }
-        .danger-btn { background-color: #ed4956; }
-        .danger-btn:hover { background-color: #c93b45; }
-        textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #dbdbdb;
-            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .logout-btn {
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        textarea, input {
+            width: 100%;
+            background-color: #0d1322;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
             box-sizing: border-box;
             resize: none;
             font-family: inherit;
             margin-bottom: 10px;
         }
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: var(--accent);
         }
-        .post-header {
+
+        .status-msg {
+            font-size: 12px;
+            color: #10b981;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        /* Navigazione a tab in basso */
+        nav {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
+            justify-content: space-around;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px 0 env(safe-area-inset-bottom, 10px);
+            z-index: 100;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
             cursor: pointer;
+            padding: 5px;
         }
-        .post-header img { width: 35px; height: 35px; }
-        .post-author { font-weight: bold; font-size: 14px; }
-        .post-date { font-size: 11px; color: #8e8e8e; }
-        .post-content { font-size: 15px; line-height: 1.4; margin-bottom: 15px; word-break: break-word; }
-        .nav-links { display: flex; gap: 15px; align-items: center; }
-        .nav-links a { text-decoration: none; color: #262626; font-weight: bold; font-size: 14px; cursor: pointer; }
-        .profile-banner {
-            text-align: center;
-            padding: 20px;
-            background: white;
-            border: 1px solid #dbdbdb;
-            border-radius: 8px;
-            margin-bottom: 20px;
+
+        nav button.active {
+            color: var(--accent);
         }
-        .profile-banner img { width: 80px; height: 80px; margin-bottom: 10px; }
+
+        .view-section {
+            display: none;
+            padding-bottom: 80px; /* Spazio per la nav in basso */
+        }
+
+        .view-section.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Header / Navbar -->
+    <!-- Header dell'App -->
     <header id="mainHeader" style="display:none;">
-        <h1 onclick="showHome()">MiniSocial</h1>
-        <div class="nav-links">
-            <a onclick="showHome()">Home</a>
-            <a onclick="showMyProfile()">Il mio Profilo</a>
-            <a onclick="logout()" style="color: #ed4956;">Esci</a>
+        <div class="logo">⚡ Command Center</div>
+        <div class="user-info">
+            <img id="userPhoto" class="user-avatar" src="" alt="Profilo">
         </div>
     </header>
 
     <div class="container">
-        <!-- Schermata Login -->
-        <div id="login-section" class="card" style="text-align: center; display: none; margin-top: 50px;">
-            <h2>Benvenuto su MiniSocial</h2>
-            <p style="color: #8e8e8e; margin-bottom: 20px;">Accedi con Google per condividere post e vedere quelli degli altri.</p>
-            <button id="googleLoginBtn" style="width: 100%;">Accedi con Google</button>
+        <!-- Schermata di Login -->
+        <div id="login-section" class="card" style="text-align: center; margin-top: 100px;">
+            <h2>Accesso Riservato</h2>
+            <p>Autenticazione richiesta per accedere al sistema di pianificazione strategica.</p>
+            <button id="googleLoginBtn" style="margin-top: 15px;">Autorizza con Google</button>
         </div>
 
-        <!-- Vista Feed Home -->
-        <div id="home-view" style="display: none;">
-            <!-- Crea Post -->
+        <!-- SEZIONE 1: OBIETTIVI & ROUTINE (Home) -->
+        <div id="view-home" class="view-section">
             <div class="card">
-                <h3>Cosa c'è di nuovo?</h3>
-                <textarea id="postInput" rows="3" placeholder="Condividi un pensiero con la community..."></textarea>
-                <div style="text-align: right;">
-                    <button id="publishBtn">Pubblica</button>
-                </div>
+                <h3>Routine & Obiettivi Giornalieri</h3>
+                <p>Pianifica le tue mosse con precisione chirurgica.</p>
+                <textarea id="dailyGoalInput" rows="3" placeholder="Scrivi gli obiettivi di oggi..."></textarea>
+                <button id="saveGoalsBtn">Aggiorna Strategia</button>
+                <div id="saveMsg" class="status-msg"></div>
             </div>
-            <!-- Lista Post -->
-            <div id="feedContainer"></div>
+
+            <div class="card">
+                <h3>Stato Mentale / Note Rapide</h3>
+                <p id="loadedGoalsDisplay" style="color: var(--text-primary); white-space: pre-wrap; margin-top: 10px;">Nessuna strategia registrata per oggi.</p>
+            </div>
         </div>
 
-        <!-- Vista Profilo Utente -->
-        <div id="profile-view" style="display: none;">
-            <div id="profileBanner" class="profile-banner"></div>
-            <h3 style="margin-bottom: 15px;">Post pubblicati:</h3>
-            <div id="profileFeedContainer"></div>
+        <!-- SEZIONE 2: MIND VAULT (Archivio) -->
+        <div id="view-vault" class="view-section">
+            <div class="card">
+                <h3>Mind Vault</h3>
+                <p>Il tuo archivio di formule, idee e strategie a lungo termine.</p>
+                <textarea id="vaultInput" rows="5" placeholder="Inserisci dati o appunti segreti..."></textarea>
+                <button id="saveVaultBtn">Salva nel Cloud</button>
+                <div id="vaultMsg" class="status-msg"></div>
+            </div>
+        </div>
+
+        <!-- SEZIONE 3: PROFILO & SISTEMA -->
+        <div id="view-profile" class="view-section">
+            <div class="card" style="text-align: center;">
+                <img id="profileBigPhoto" class="user-avatar" style="width: 80px; height: 80px; margin-bottom: 10px;" src="">
+                <h3 id="profileName" style="margin-bottom: 5px;"></h3>
+                <p id="profileEmail" style="margin-top: 0;"></p>
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+                <button class="logout-btn" onclick="logout()">Disconnetti Sessione</button>
+            </div>
         </div>
     </div>
+
+    <!-- Barra di navigazione inferiore in stile App nativa -->
+    <nav id="bottomNav" style="display:none;">
+        <button onclick="switchTab('home')" id="nav-home" class="active">📊 Strategia</button>
+        <button onclick="switchTab('vault')" id="nav-vault">🧠 Mind Vault</button>
+        <button onclick="switchTab('profile')" id="nav-profile">⚙️ Profilo</button>
+    </nav>
 
     <!-- Script Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAmFS014XYQ8b3pJ5iz2g5m8kwiqgizuBY",
@@ -153,178 +271,83 @@
 
         let currentUser = null;
 
-        // Gestione Auth State
-        onAuthStateChanged(auth, (user) => {
+        // Controllo stato autenticazione
+        onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             if (user) {
                 document.getElementById("login-section").style.display = "none";
                 document.getElementById("mainHeader").style.display = "flex";
-                showHome();
+                document.getElementById("bottomNav").style.display = "flex";
+                switchTab('home');
+
+                // Popola dati profilo
+                document.getElementById("userPhoto").src = user.photoURL || "";
+                document.getElementById("profileBigPhoto").src = user.photoURL || "";
+                document.getElementById("profileName").innerText = user.displayName || "Utente";
+                document.getElementById("profileEmail").innerText = user.email || "";
+
+                // Carica dati utente da Firestore
+                await loadUserData(user.uid);
             } else {
                 document.getElementById("login-section").style.display = "block";
                 document.getElementById("mainHeader").style.display = "none";
-                document.getElementById("home-view").style.display = "none";
-                document.getElementById("profile-view").style.display = "none";
+                document.getElementById("bottomNav").style.display = "none";
+                document.querySelectorAll(".view-section").forEach(el => el.classList.remove("active"));
             }
         });
 
-        // Pulsante Login
+        // Login con Google
         document.getElementById("googleLoginBtn").addEventListener("click", () => {
             signInWithPopup(auth, provider).catch(e => alert("Errore login: " + e.message));
         });
 
-        // Funzione Logout globale
+        // Logout globale
         window.logout = () => {
             signOut(auth).then(() => window.location.reload());
         };
 
-        // Navigazione: Mostra Home
-        window.showHome = async () => {
-            document.getElementById("home-view").style.display = "block";
-            document.getElementById("profile-view").style.display = "none";
-            await loadFeed("feedContainer");
+        // Gestione Tab (Schermate)
+        window.switchTab = (tabName) => {
+            document.querySelectorAll(".view-section").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll("nav button").forEach(el => el.classList.remove("active"));
+
+            document.getElementById("view-" + tabName).classList.add("active");
+            document.getElementById("nav-" + tabName).classList.add("active");
         };
 
-        // Navigazione: Mostra Profilo Personale
-        window.showMyProfile = () => {
-            if (currentUser) {
-                window.showUserProfile(currentUser.uid, currentUser.displayName, currentUser.email, currentUser.photoURL);
-            }
-        };
-
-        // Mostra Profilo di un utente specifico
-        window.showUserProfile = async (uid, name, email, photoURL) => {
-            document.getElementById("home-view").style.display = "none";
-            document.getElementById("profile-view").style.display = "block";
-
-            const banner = document.getElementById("profileBanner");
-            banner.innerHTML = `
-                <img src="${photoURL || 'https://via.placeholder.com/80'}" class="user-avatar" style="width:80px;height:80px;">
-                <h2>${name || 'Utente'}</h2>
-                <p style="color: #8e8e8e; font-size: 14px; margin: 0;">${email || ''}</p>
-            `;
-
-            await loadUserPosts(uid, "profileFeedContainer");
-        };
-
-        // Pubblica Post
-        document.getElementById("publishBtn").addEventListener("click", async () => {
-            const text = document.getElementById("postInput").value.trim();
-            if (!text) return alert("Scrivi qualcosa prima di pubblicare!");
-
+        // Salvataggio obiettivi/routine
+        document.getElementById("saveGoalsBtn").addEventListener("click", async () => {
+            if (!currentUser) return;
+            const text = document.getElementById("dailyGoalInput").value;
             try {
-                await addDoc(collection(db, "posts"), {
-                    uid: currentUser.uid,
-                    name: currentUser.displayName || "Utente",
-                    email: currentUser.email,
-                    photoURL: currentUser.photoURL || "",
-                    text: text,
-                    createdAt: serverTimestamp()
-                });
-                document.getElementById("postInput").value = "";
-                await loadFeed("feedContainer");
+                await setDoc(doc(db, "users_data", currentUser.uid), {
+                    goals: text,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+
+                document.getElementById("loadedGoalsDisplay").innerText = text || "Nessuna strategia registrata.";
+                const msg = document.getElementById("saveMsg");
+                msg.innerText = "Aggiornato con successo.";
+                setTimeout(() => msg.innerText = "", 3000);
             } catch (e) {
-                console.error("Errore pubblicazione:", e);
-                alert("Errore durante la pubblicazione.");
+                alert("Errore di salvataggio.");
             }
         });
 
-        // Carica Feed Generale
-        async function loadFeed(containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = "<p style='text-align:center; color:#8e8e8e;'>Caricamento post...</p>";
-
+        // Caricamento dati da Firestore
+        async function loadUserData(uid) {
             try {
-                const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                container.innerHTML = "";
-                if (querySnapshot.empty) {
-                    container.innerHTML = "<p style='text-align:center; color:#8e8e8e;'>Nessun post trovato. Sii il primo a scrivere qualcosa!</p>";
-                    return;
+                const docSnap = await getDoc(doc(db, "users_data", uid));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.goals) {
+                        document.getElementById("dailyGoalInput").value = data.goals;
+                        document.getElementById("loadedGoalsDisplay").innerText = data.goals;
+                    }
                 }
-
-                querySnapshot.forEach((docSnap) => {
-                    const post = docSnap.data();
-                    const postId = docSnap.id;
-                    container.appendChild(createPostCard(post, postId));
-                });
             } catch (e) {
-                console.error("Errore caricamento feed:", e);
-                container.innerHTML = "<p style='text-align:center; color:red;'>Errore nel caricamento dei post.</p>";
+                console.log("Nessun dato precedente.");
             }
-        }
-
-        // Carica Post di un singolo utente
-        async function loadUserPosts(uid, containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = "<p style='text-align:center; color:#8e8e8e;'>Caricamento post...</p>";
-
-            try {
-                const q = query(collection(db, "posts"), where("uid", "==", uid));
-                const querySnapshot = await getDocs(q);
-                
-                container.innerHTML = "";
-                if (querySnapshot.empty) {
-                    container.innerHTML = "<p style='text-align:center; color:#8e8e8e;'>Questo utente non ha ancora pubblicato nulla.</p>";
-                    return;
-                }
-
-                querySnapshot.forEach((docSnap) => {
-                    const post = docSnap.data();
-                    const postId = docSnap.id;
-                    container.appendChild(createPostCard(post, postId));
-                });
-            } catch (e) {
-                console.error("Errore caricamento profilo:", e);
-                container.innerHTML = "<p style='text-align:center; color:red;'>Errore nel caricamento.</p>";
-            }
-        }
-
-        // Crea l'elemento HTML di un post
-        function createPostCard(post, postId) {
-            const card = document.createElement("div");
-            card.className = "card";
-
-            const dateStr = post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleString() : "Data recente";
-            const avatar = post.photoURL || "https://via.placeholder.com/40";
-
-            let deleteBtnHtml = "";
-            if (currentUser && post.uid === currentUser.uid) {
-                deleteBtnHtml = `<button onclick="deletePost('${postId}')" class="danger-btn" style="padding: 4px 8px; font-size: 11px; float: right;">Elimina</button>`;
-            }
-
-            card.innerHTML = `
-                <div class="post-header" onclick="showUserProfile('${post.uid}', '${escapeHtml(post.name)}', '${post.email}', '${post.photoURL}')">
-                    <img src="${avatar}" class="user-avatar" alt="Avatar">
-                    <div>
-                        <div class="post-author">${escapeHtml(post.name)}</div>
-                        <div class="post-date">${dateStr}</div>
-                    </div>
-                </div>
-                <div class="post-content">${escapeHtml(post.text)}</div>
-                ${deleteBtnHtml}
-            `;
-            return card;
-        }
-
-        // Elimina post
-        window.deletePost = async (postId) => {
-            if (confirm("Vuoi davvero eliminare questo post?")) {
-                try {
-                    await deleteDoc(doc(db, "posts", postId));
-                    showHome();
-                } catch (e) {
-                    alert("Errore durante l'eliminazione.");
-                }
-            }
-        };
-
-        // Sicurezza di base per il testo
-        function escapeHtml(text) {
-            if (!text) return "";
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return text.replace(/[&<>"']/g, m => map[m]);
         }
     </script>
 
