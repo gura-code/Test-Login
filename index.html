@@ -5,32 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Command Center</title>
     
-    <!-- Meta tag per farla sembrare un'app a schermo intero -->
+    <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
 
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: #111827;
-            --border-color: #1f293d;
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
+            --bg: #07080b;
+            --surface: #12151c;
+            --surface-hover: #1b202d;
+            --border: #262c3d;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #f59e0b; /* Oro strategico */
+            --accent-glow: rgba(245, 158, 11, 0.15);
             --danger: #ef4444;
+            --success: #10b981;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            background-color: var(--bg);
+            color: var(--text-main);
             margin: 0;
-            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            padding: 15px 15px 90px 15px;
             box-sizing: border-box;
         }
 
@@ -38,215 +36,231 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 5px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 12px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
             margin-bottom: 20px;
         }
 
         .logo {
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
             color: var(--accent);
             text-transform: uppercase;
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .user-avatar {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
+            border: 2px solid var(--accent);
             object-fit: cover;
-            border: 1px solid var(--border-color);
-        }
-
-        .container {
-            flex: 1;
-            max-width: 600px;
-            width: 100%;
-            margin: 0 auto;
         }
 
         .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            margin-bottom: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
         }
 
-        h2, h3 {
+        h3 {
             margin-top: 0;
-            font-size: 18px;
-            letter-spacing: -0.5px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         p {
-            color: var(--text-secondary);
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        input, textarea {
+            width: 100%;
+            background-color: #0c0e14;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text-main);
             font-size: 14px;
-            line-height: 1.5;
+            box-sizing: border-box;
+            font-family: inherit;
+            margin-bottom: 10px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent);
         }
 
         button {
             background-color: var(--accent);
-            color: white;
+            color: #07080b;
             border: none;
-            padding: 10px 16px;
+            padding: 12px 16px;
             font-size: 14px;
-            font-weight: 600;
-            border-radius: 8px;
+            font-weight: 700;
+            border-radius: 10px;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
+            transition: opacity 0.2s;
         }
 
-        button:hover {
-            background-color: var(--accent-hover);
-        }
+        button:active { opacity: 0.8; }
 
-        .logout-btn {
-            background-color: transparent;
-            color: var(--danger);
-            border: 1px solid var(--border-color);
-            margin-top: 10px;
-        }
-
-        .logout-btn:hover {
-            background-color: rgba(239, 68, 68, 0.1);
-        }
-
-        textarea, input {
-            width: 100%;
-            background-color: #0d1322;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            color: var(--text-primary);
+        /* Todo List Stili */
+        .todo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0c0e14;
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 8px;
             font-size: 14px;
-            box-sizing: border-box;
-            resize: none;
-            font-family: inherit;
-            margin-bottom: 10px;
         }
 
-        textarea:focus, input:focus {
-            outline: none;
-            border-color: var(--accent);
+        .todo-item.completed span {
+            text-decoration: line-through;
+            color: var(--text-muted);
         }
 
-        .status-msg {
-            font-size: 12px;
-            color: #10b981;
-            margin-top: 5px;
-            font-weight: 600;
-        }
+        .todo-actions { display: flex; gap: 8px; }
+        .todo-actions button { width: auto; padding: 4px 8px; font-size: 11px; }
 
-        /* Navigazione a tab in basso */
+        /* Navigazione Inferiore App Style */
         nav {
             display: flex;
             justify-content: space-around;
-            background-color: var(--card-bg);
-            border-top: 1px solid var(--border-color);
+            background-color: var(--surface);
+            border-top: 1px solid var(--border);
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             padding: 10px 0 env(safe-area-inset-bottom, 10px);
             z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         nav button {
             background: none;
             border: none;
-            color: var(--text-secondary);
-            font-size: 12px;
-            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
             cursor: pointer;
-            padding: 5px;
+            padding: 6px;
+            width: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
         }
 
         nav button.active {
             color: var(--accent);
         }
 
-        .view-section {
-            display: none;
-            padding-bottom: 80px; /* Spazio per la nav in basso */
-        }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
 
-        .view-section.active {
-            display: block;
+        .status-msg {
+            font-size: 12px;
+            color: var(--success);
+            margin-top: 6px;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header dell'App -->
     <header id="mainHeader" style="display:none;">
         <div class="logo">⚡ Command Center</div>
-        <div class="user-info">
-            <img id="userPhoto" class="user-avatar" src="" alt="Profilo">
-        </div>
+        <img id="userPhoto" class="user-avatar" src="" alt="Profilo">
     </header>
 
     <div class="container">
-        <!-- Schermata di Login -->
-        <div id="login-section" class="card" style="text-align: center; margin-top: 100px;">
-            <h2>Accesso Riservato</h2>
-            <p>Autenticazione richiesta per accedere al sistema di pianificazione strategica.</p>
-            <button id="googleLoginBtn" style="margin-top: 15px;">Autorizza con Google</button>
+        <!-- Schermata Login -->
+        <div id="login-section" class="card" style="text-align: center; margin-top: 80px;">
+            <h2 style="color:var(--accent);">ACCESSO RISERVATO</h2>
+            <p>Autenticazione richiesta per sbloccare la plancia di comando.</p>
+            <button id="googleLoginBtn" style="margin-top: 15px;">Accedi con Google</button>
         </div>
 
-        <!-- SEZIONE 1: OBIETTIVI & ROUTINE (Home) -->
+        <!-- SEZIONE 1: OBIETTIVI & ROUTINE -->
         <div id="view-home" class="view-section">
             <div class="card">
-                <h3>Routine & Obiettivi Giornalieri</h3>
-                <p>Pianifica le tue mosse con precisione chirurgica.</p>
-                <textarea id="dailyGoalInput" rows="3" placeholder="Scrivi gli obiettivi di oggi..."></textarea>
-                <button id="saveGoalsBtn">Aggiorna Strategia</button>
+                <h3>🎯 Obiettivi Master & Focus</h3>
+                <p>Definisci la strategia principale della giornata.</p>
+                <textarea id="mainGoalsInput" rows="3" placeholder="Es: Studiare matematica, finire il progetto..."></textarea>
+                <button id="saveGoalsBtn">Salva Obiettivi</button>
                 <div id="saveMsg" class="status-msg"></div>
             </div>
 
             <div class="card">
-                <h3>Stato Mentale / Note Rapide</h3>
-                <p id="loadedGoalsDisplay" style="color: var(--text-primary); white-space: pre-wrap; margin-top: 10px;">Nessuna strategia registrata per oggi.</p>
+                <h3>📌 Promemoria Rapidi</h3>
+                <p>Note veloci da non dimenticare.</p>
+                <textarea id="quickNotesInput" rows="3" placeholder="Scrivi un appunto..."></textarea>
+                <button id="saveNotesBtn">Aggiorna Note</button>
+                <div id="notesMsg" class="status-msg"></div>
             </div>
         </div>
 
-        <!-- SEZIONE 2: MIND VAULT (Archivio) -->
-        <div id="view-vault" class="view-section">
+        <!-- SEZIONE 2: TO-DO LIST -->
+        <div id="view-todo" class="view-section">
             <div class="card">
-                <h3>Mind Vault</h3>
-                <p>Il tuo archivio di formule, idee e strategie a lungo termine.</p>
-                <textarea id="vaultInput" rows="5" placeholder="Inserisci dati o appunti segreti..."></textarea>
-                <button id="saveVaultBtn">Salva nel Cloud</button>
-                <div id="vaultMsg" class="status-msg"></div>
+                <h3>📋 Task Manager (To-Do)</h3>
+                <p>Azioni da completare chirurgicamente.</p>
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <input type="text" id="newTodoInput" placeholder="Nuovo task..." style="margin:0;">
+                    <button id="addTodoBtn" style="width: 90px;">Aggiungi</button>
+                </div>
+                <div id="todoListContainer"></div>
             </div>
         </div>
 
-        <!-- SEZIONE 3: PROFILO & SISTEMA -->
+        <!-- SEZIONE 3: ORARIO & TIMELINE -->
+        <div id="view-schedule" class="view-section">
+            <div class="card">
+                <h3>⏰ Orario & Tabella di Marcia</h3>
+                <p>Gestisci i blocchi orari della giornata.</p>
+                <textarea id="scheduleInput" rows="6" placeholder="08:00 - Studio&#10;10:00 - Allenamento&#10;14:00 - Lettura..."></textarea>
+                <button id="saveScheduleBtn">Salva Orario</button>
+                <div id="scheduleMsg" class="status-msg"></div>
+            </div>
+        </div>
+
+        <!-- SEZIONE 4: PROFILO -->
         <div id="view-profile" class="view-section">
             <div class="card" style="text-align: center;">
-                <img id="profileBigPhoto" class="user-avatar" style="width: 80px; height: 80px; margin-bottom: 10px;" src="">
-                <h3 id="profileName" style="margin-bottom: 5px;"></h3>
+                <img id="profileBigPhoto" class="user-avatar" style="width: 70px; height: 70px; margin-bottom: 12px;" src="">
+                <h3 id="profileName" style="justify-content: center; margin-bottom: 4px;"></h3>
                 <p id="profileEmail" style="margin-top: 0;"></p>
-                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
-                <button class="logout-btn" onclick="logout()">Disconnetti Sessione</button>
+                <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+                <button onclick="logout()" style="background-color: transparent; color: var(--danger); border: 1px solid var(--danger);">Disconnetti Sessione</button>
             </div>
         </div>
     </div>
 
-    <!-- Barra di navigazione inferiore in stile App nativa -->
+    <!-- Barra Navigazione Inferiore -->
     <nav id="bottomNav" style="display:none;">
-        <button onclick="switchTab('home')" id="nav-home" class="active">📊 Strategia</button>
-        <button onclick="switchTab('vault')" id="nav-vault">🧠 Mind Vault</button>
-        <button onclick="switchTab('profile')" id="nav-profile">⚙️ Profilo</button>
+        <button onclick="switchTab('home')" id="nav-home" class="active">🎯 <span>Focus</span></button>
+        <button onclick="switchTab('todo')" id="nav-todo">📋 <span>To-Do</span></button>
+        <button onclick="switchTab('schedule')" id="nav-schedule">⏰ <span>Orario</span></button>
+        <button onclick="switchTab('profile')" id="nav-profile">⚙️ <span>Profilo</span></button>
     </nav>
 
     <!-- Script Firebase -->
@@ -270,8 +284,8 @@
         const provider = new GoogleAuthProvider();
 
         let currentUser = null;
+        let localData = { goals: "", notes: "", schedule: "", todos: [] };
 
-        // Controllo stato autenticazione
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             if (user) {
@@ -280,13 +294,11 @@
                 document.getElementById("bottomNav").style.display = "flex";
                 switchTab('home');
 
-                // Popola dati profilo
                 document.getElementById("userPhoto").src = user.photoURL || "";
                 document.getElementById("profileBigPhoto").src = user.photoURL || "";
                 document.getElementById("profileName").innerText = user.displayName || "Utente";
                 document.getElementById("profileEmail").innerText = user.email || "";
 
-                // Carica dati utente da Firestore
                 await loadUserData(user.uid);
             } else {
                 document.getElementById("login-section").style.display = "block";
@@ -296,60 +308,108 @@
             }
         });
 
-        // Login con Google
         document.getElementById("googleLoginBtn").addEventListener("click", () => {
             signInWithPopup(auth, provider).catch(e => alert("Errore login: " + e.message));
         });
 
-        // Logout globale
         window.logout = () => {
             signOut(auth).then(() => window.location.reload());
         };
 
-        // Gestione Tab (Schermate)
         window.switchTab = (tabName) => {
             document.querySelectorAll(".view-section").forEach(el => el.classList.remove("active"));
             document.querySelectorAll("nav button").forEach(el => el.classList.remove("active"));
-
             document.getElementById("view-" + tabName).classList.add("active");
             document.getElementById("nav-" + tabName).classList.add("active");
         };
 
-        // Salvataggio obiettivi/routine
-        document.getElementById("saveGoalsBtn").addEventListener("click", async () => {
+        // Funzione salvataggio generico su Firestore
+        async function saveToCloud(msgElementId, successText) {
             if (!currentUser) return;
-            const text = document.getElementById("dailyGoalInput").value;
             try {
-                await setDoc(doc(db, "users_data", currentUser.uid), {
-                    goals: text,
-                    updatedAt: new Date().toISOString()
-                }, { merge: true });
-
-                document.getElementById("loadedGoalsDisplay").innerText = text || "Nessuna strategia registrata.";
-                const msg = document.getElementById("saveMsg");
-                msg.innerText = "Aggiornato con successo.";
-                setTimeout(() => msg.innerText = "", 3000);
+                await setDoc(doc(db, "command_center", currentUser.uid), localData, { merge: true });
+                const msg = document.getElementById(msgElementId);
+                msg.innerText = successText;
+                setTimeout(() => msg.innerText = "", 2500);
             } catch (e) {
-                alert("Errore di salvataggio.");
+                alert("Errore nel salvataggio sul cloud.");
             }
+        }
+
+        document.getElementById("saveGoalsBtn").addEventListener("click", async () => {
+            localData.goals = document.getElementById("mainGoalsInput").value;
+            await saveToCloud("saveMsg", " Obiettivi aggiornati!");
         });
 
-        // Caricamento dati da Firestore
+        document.getElementById("saveNotesBtn").addEventListener("click", async () => {
+            localData.notes = document.getElementById("quickNotesInput").value;
+            await saveToCloud("notesMsg", " Note salvate!");
+        });
+
+        document.getElementById("saveScheduleBtn").addEventListener("click", async () => {
+            localData.schedule = document.getElementById("scheduleInput").value;
+            await saveToCloud("scheduleMsg", " Orario salvato!");
+        });
+
+        // Gestione To-Do List
+        document.getElementById("addTodoBtn").addEventListener("click", async () => {
+            const val = document.getElementById("newTodoInput").value.trim();
+            if (!val) return;
+            localData.todos.push({ text: val, completed: false });
+            document.getElementById("newTodoInput").value = "";
+            renderTodos();
+            await saveToCloud("saveMsg", "");
+        });
+
+        window.toggleTodo = async (index) => {
+            localData.todos[index].completed = !localData.todos[index].completed;
+            renderTodos();
+            await saveToCloud("saveMsg", "");
+        };
+
+        window.deleteTodo = async (index) => {
+            localData.todos.splice(index, 1);
+            renderTodos();
+            await saveToCloud("saveMsg", "");
+        };
+
+        function renderTodos() {
+            const container = document.getElementById("todoListContainer");
+            container.innerHTML = "";
+            if (!localData.todos || localData.todos.length === 0) {
+                container.innerHTML = "<p style='text-align:center;'>Nessun task in sospeso.</p>";
+                return;
+            }
+            localData.todos.forEach((todo, idx) => {
+                const div = document.createElement("div");
+                div.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                div.innerHTML = `
+                    <span onclick="toggleTodo(${idx})" style="cursor:pointer; flex:1; word-break:break-word;">${todo.text}</span>
+                    <div class="todo-actions">
+                        <button onclick="toggleTodo(${idx})" style="background:${todo.completed ? '#475569' : '#10b981'}; color:white;">${todo.completed ? 'Annulla' : 'Fatto'}</button>
+                        <button onclick="deleteTodo(${idx})" style="background:var(--danger); color:white;">X</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
         async function loadUserData(uid) {
             try {
-                const docSnap = await getDoc(doc(db, "users_data", uid));
+                const docSnap = await getDoc(doc(db, "command_center", uid));
                 if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data.goals) {
-                        document.getElementById("dailyGoalInput").value = data.goals;
-                        document.getElementById("loadedGoalsDisplay").innerText = data.goals;
-                    }
+                    localData = docSnap.data();
+                    if (!localData.todos) localData.todos = [];
+                    
+                    document.getElementById("mainGoalsInput").value = localData.goals || "";
+                    document.getElementById("quickNotesInput").value = localData.notes || "";
+                    document.getElementById("scheduleInput").value = localData.schedule || "";
+                    renderTodos();
                 }
             } catch (e) {
-                console.log("Nessun dato precedente.");
+                console.log("Nessun dato precedente trovato.");
             }
         }
     </script>
-
 </body>
 </html>
