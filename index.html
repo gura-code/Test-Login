@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Login Firebase</title>
+    <title>Piattaforma Privata - Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,23 +14,56 @@
         }
         .card {
             background: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             display: inline-block;
+            max-width: 400px;
+        }
+        button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #357ae8;
+        }
+        #logoutBtn {
+            background-color: #db4437;
+        }
+        #logoutBtn:hover {
+            background-color: #c23321;
         }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h2>Test Login Firebase</h2>
-        <p id="status">Connessione a Firebase in corso...</p>
+        <h2>Piattaforma Privata</h2>
+        <p id="status">Caricamento in corso...</p>
+        
+        <!-- Sezione visibile quando NON sei loggato -->
+        <div id="login-section" style="display: none;">
+            <p>Accedi con il tuo account Google per entrare:</p>
+            <button id="googleLoginBtn">Accedi con Google</button>
+        </div>
+        
+        <!-- Sezione visibile quando SEI loggato -->
+        <div id="user-section" style="display: none;">
+            <p>Benvenuto, <span id="userName"></span>!</p>
+            <button id="logoutBtn">Esci</button>
+        </div>
     </div>
 
-    <!-- Script JavaScript per collegare Firebase -->
+    <!-- Script JavaScript per Firebase e Autenticazione Google -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAmFS014XYQ8b3pJ5iz2g5m8kwiqgizuBY",
@@ -43,10 +76,47 @@
 
         try {
             const app = initializeApp(firebaseConfig);
-            document.getElementById("status").innerText = "Firebase connesso con successo!";
-            console.log("Firebase inizializzato:", app);
+            const auth = getAuth(app);
+            
+            // Ascolta i cambiamenti di stato (se l'utente è loggato o meno)
+            onAuthStateChanged(auth, (user) => {
+                document.getElementById("status").style.display = "none";
+                if (user) {
+                    // Utente entrato
+                    document.getElementById("login-section").style.display = "none";
+                    document.getElementById("user-section").style.display = "block";
+                    document.getElementById("userName").innerText = user.displayName || user.email;
+                } else {
+                    // Utente uscito o non loggato
+                    document.getElementById("login-section").style.display = "block";
+                    document.getElementById("user-section").style.display = "none";
+                }
+            });
+
+            // Gestione click sul pulsante di Login con Google
+            const provider = new GoogleAuthProvider();
+            document.getElementById("googleLoginBtn").addEventListener("click", () => {
+                signInWithPopup(auth, provider)
+                .then((result) => {
+                    console.log("Login riuscito!", result.user);
+                })
+                .catch((error) => {
+                    console.error("Errore durante il login:", error);
+                    alert("Errore di login: " + error.message);
+                });
+            });
+
+            // Gestione click sul pulsante di Logout (Esci)
+            document.getElementById("logoutBtn").addEventListener("click", () => {
+                signOut(auth).then(() => {
+                    console.log("Logout effettuato");
+                }).catch((error) => {
+                    console.error("Errore durante il logout:", error);
+                });
+            });
+
         } catch (error) {
-            document.getElementById("status").innerText = "Errore di connessione a Firebase.";
+            document.getElementById("status").innerText = "Errore di configurazione Firebase.";
             console.error("Errore:", error);
         }
     </script>
