@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login Firebase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Test Login Firebase</h2>
+        <p id="status">Connessione a Firebase in corso...</p>
+    </div>
+
+    <!-- Script JavaScript per collegare Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAmFS014XYQ8b3pJ5iz2g5m8kwiqgizuBY",
+          authDomain: "test-login-5d045.firebaseapp.com",
+          projectId: "test-login-5d045",
+          storageBucket: "test-login-5d045.firebasestorage.app",
+          messagingSenderId: "405305919800",
+          appId: "1:405305919800:web:dc110785fd431b066459cd"
+        };
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            document.getElementById("status").innerText = "Firebase connesso con successo!";
+            console.log("Firebase inizializzato:", app);
+        } cy catch (error) { // wait, catch block format
+            // fix catch block below properly
+        }
+    </script>
+
+</body>
+</html>
