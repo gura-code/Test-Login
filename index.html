@@ -45,8 +45,9 @@
             const app = initializeApp(firebaseConfig);
             document.getElementById("status").innerText = "Firebase connesso con successo!";
             console.log("Firebase inizializzato:", app);
-        } cy catch (error) { // wait, catch block format
-            // fix catch block below properly
+        } catch (error) {
+            document.getElementById("status").innerText = "Errore di connessione a Firebase.";
+            console.error("Errore:", error);
         }
     </script>
 
