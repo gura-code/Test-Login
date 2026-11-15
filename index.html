@@ -82,10 +82,10 @@
         </div>
     </div>
 
-    <!-- Script Firebase -->
+    <!-- Script Firebase con Popup -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -102,12 +102,7 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // Gestisce il ritorno dal redirect di Google
-        getRedirectResult(auth).catch((error) => {
-            console.error("Errore redirect:", error);
-        });
-
-        // Controlla se l'utente è loggato
+        // Controlla lo stato dell'utente in tempo reale
         onAuthStateChanged(auth, async (user) => {
             document.getElementById("status").style.display = "none";
             if (user) {
@@ -123,7 +118,7 @@
                     photo.style.display = "inline-block";
                 }
 
-                // Carica eventuali dati salvati in precedenza da Firestore
+                // Carica dati da Firestore
                 try {
                     const docRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(docRef);
@@ -131,7 +126,7 @@
                         document.getElementById("userStatusInput").value = docSnap.data().statusText || "";
                     }
                 } catch (e) {
-                    console.log("Nessun dato precedente trovato.");
+                    console.log("Nessun dato precedente.");
                 }
 
             } else {
@@ -140,12 +135,16 @@
             }
         });
 
-        // Azione tasto Login
+        // Azione tasto Login con Popup
         document.getElementById("googleLoginBtn").addEventListener("click", () => {
-            signInWithRedirect(auth, provider);
+            signInWithPopup(auth, provider)
+                .catch((error) => {
+                    console.error("Errore login popup:", error);
+                    alert("Errore durante il login: " + error.message);
+                });
         });
 
-        // Azione tasto Salva Dati sul database
+        // Azione tasto Salva Dati
         document.getElementById("saveDataBtn").addEventListener("click", async () => {
             const user = auth.currentUser;
             const text = document.getElementById("userStatusInput").value;
